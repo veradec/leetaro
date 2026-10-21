@@ -172,24 +172,83 @@ void SettingsMenu() {
   WriteDrawText("Master Level", width / 2 - (width / 6),
 		height / 2 + (height / 10), (font_size * 2), BLACK);
 
+  /* Rectangle master_rec = {width / 2 + (width / 5), height / 2 + (height / 10), */
+  /*                         MeasureText("[]", font_size * 3) * master_level, */
+  /*                         font_size * 2, BLACK}; */
 
-  /* DrawRectangle(width/2 + (width/5) - font_size*2, height/2+(height/10), MeasureText("[]", font_size*2)*master_level, font_size*2, BLACK); */
-  x
+  Rectangle master_rec = MakeRect(width/2+(width/5), height/2 + (height/10), MeasureText("[]", font_size * 3) * master_level, font_size*2);
+  Rectangle master_bg = MakeRect(width/2+(width/5), height/2 + (height/10), MeasureText("[]", font_size * 3) * 9, font_size*2);
+  DrawRectangleRec(master_bg, WHITE);
+  DrawRectangleRec(master_rec, BLACK);
+
+  if (IsMouseInside(master_bg)) {
+    float delta_mouse_scroll = GetMouseWheelMove();
+    if (delta_mouse_scroll < 0) {
+      if (master_level > 0) {
+	master_level--;
+      }
+    }
+    if (delta_mouse_scroll > 0) {
+      if (master_level < 9) {
+	master_level++;
+      }
+    }
+  }
+  
   //////////////
 
   // Music Level
   WriteDrawText("Music Level", width / 2 - (width / 6),
 		height / 2 + (height / 10) * 2, (font_size * 2), BLACK);
 
-  WriteDrawText(sound_level[music_level], width/2+(width/5), height/2+(height/10)*2, (font_size*2), BLACK);
 
-  //////////////
+  Rectangle music_rec = MakeRect(width/2+(width/5), height/2 + (height/10)*2, MeasureText("[]", font_size * 3) * music_level, font_size*2);
+  Rectangle music_bg = MakeRect(width/2+(width/5), height/2 + (height/10)*2, MeasureText("[]", font_size * 3) * 9, font_size*2);
+
+  DrawRectangleRec(music_bg, WHITE);
+  DrawRectangleRec(music_rec, BLACK);
+
+  
+  if (IsMouseInside(music_bg)) {
+    float delta_mouse_scroll = GetMouseWheelMove();
+    if (delta_mouse_scroll < 0) {
+      if (music_level > 0) {
+	music_level--;
+      }
+    }
+    if (delta_mouse_scroll > 0) {
+      if (music_level < 9) {
+	music_level++;
+      }
+    }
+  }
+
+ //////////////
 
   // SFX Level
   WriteDrawText("SFX Level", width / 2 - (width / 6),
 		height / 2 + (height / 10) * 3, (font_size * 2), BLACK);
 
-  WriteDrawText(sound_level[sfx_level], width/2+(width/5), height/2+(height/10)*3, (font_size*2), BLACK);
+  Rectangle sfx_rec = MakeRect(width/2+(width/5), height/2 + (height/10)*3, MeasureText("[]", font_size * 3) * sfx_level, font_size*2);
+  Rectangle sfx_bg = MakeRect(width/2+(width/5), height/2 + (height/10)*3, MeasureText("[]", font_size * 3) * 9, font_size*2);
+		   
+  DrawRectangleRec(sfx_bg, WHITE);
+  DrawRectangleRec(sfx_rec, BLACK);
+
+    if (IsMouseInside(sfx_bg)) {
+    float delta_mouse_scroll = GetMouseWheelMove();
+    if (delta_mouse_scroll < 0) {
+      if (sfx_level > 0) {
+	sfx_level--;
+      }
+    }
+    if (delta_mouse_scroll > 0) {
+      if (sfx_level < 9) {
+	sfx_level++;
+      }
+    }
+  }
+
   //////////////
 }
 

@@ -197,6 +197,7 @@ void SettingsMenu() {
 	master_level++;
       }
     }
+    WriteConfiguration("master_level", master_level);
   }
   
   //////////////
@@ -225,6 +226,7 @@ void SettingsMenu() {
 	music_level++;
       }
     }
+    WriteConfiguration("music_level", music_level);
   }
 
  //////////////
@@ -254,6 +256,64 @@ void SettingsMenu() {
   }
 
   //////////////
+
+  // Back
+
+    Rectangle back_rec = MakeRect(width/2, height/2 + (height/10)*4, MeasureText("BACK", font_size) * sfx_level, font_size*2);
+
+		   
+  DrawRectangleRec(back_rec, RAYWHITE);
+    WriteDrawText("Back", width / 2,
+		height / 2 + (height / 10) * 4, (font_size * 2), BLACK);
+
+    if (IsMouseInside(back_rec)) {
+      if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+	screentype = MainScreen;
+      }
+    }
+
+
+  ///
+}
+
+void SetVariables(char *line) {
+  char *token = strtok(line, " = ");
+  while (token != NULL) {	
+    char* next_token = strtok(NULL, " = ");
+
+    if (strcmp(token, "resolution") == 0) {
+      printf("INFO: RESOLUTION - %s", next_token);
+      width = atoi(strtok(next_token, "x"));
+      height = atoi(strtok(NULL, "x"));
+    }
+    if (strcmp(token, "vsync") == 0) {
+      if (strcmp(next_token, "false\n") == 0) {
+        printf("INFO: VSYNC - FALSE");
+	vsync_check = false;
+      } else {
+	vsync_check = true;
+      }
+    }
+    
+    if (strcmp(token, "fps") == 0) {
+      printf("INFO: FPS - %s", next_token);
+      max_fps = atoi(next_token);
+    }
+    if (strcmp(token, "master_level") == 0) {
+      printf("INFO: MASTER LEVEL - %s", next_token);
+      master_level = atoi(next_token);
+    }
+    if (strcmp(token, "music_level") == 0) {
+      printf("INFO: MUSIC LEVEL - %s", next_token);
+      music_level = atoi(next_token);
+    }
+    if (strcmp(token, "sfx_level") == 0) {
+      printf("INFO: SFX LEVEL - %s", next_token);
+      sfx_level = atoi(next_token);
+    }
+
+    token = next_token;
+  }
 }
 
 void LoadConfiguration() {
@@ -262,9 +322,25 @@ void LoadConfiguration() {
   int check = mkdir(".config/raycar", 0777);
 
   chdir(".config/raycar");
-  FILE *fptr = fopen("config.json","rw");
+
   /* Make a file */
-  /* fopen(fptr); */
+  FILE *fptr = fopen("settings.conf", "rw");
+  if (!fptr) {
+    fptr = fopen("settings.conf", "w");
+    printf("INFO: Couldn't read the file, so made one\n");
+    printf("INFO: Writing Configuration");
+    // Write configuration to it
+    fprintf(fptr, "resolution  = 1920x1080\nvsync = false\nfps = "
+                  "60\nmaster_level = 9\nmusic_level = 9\nsfx_level = 9\n");
+    return;
+  }
+
+  printf("INFO: reading config\n");
+  char buf[1024] = "";
+  
+  while (fgets(buf, 1024, fptr)) {
+    SetVariables(buf);
+  }
 
   /*
     Check For 1. Resolution
@@ -277,13 +353,16 @@ void LoadConfiguration() {
   fclose(fptr);
 }
 
+void WriteConfiguration(char *key, int value) {
+  
+}
 
 int main() {
   SetConfigFlags(FLAG_VSYNC_HINT);
-  InitWindow(width, height, "Astra");
+  InitWindow(width, height, "Leetaro");
   title_font = LoadFontEx("/home/san/code/raylib_car/assets/Pixelout.ttf", 32, NULL,0);
   SetTargetFPS(max_fps);
-  /* LoadConfiguration(); */
+  LoadConfiguration();
   while (!WindowShouldClose()) {
     mouse_position = GetMousePosition();
     if (show_fps) {

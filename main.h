@@ -24,5 +24,6 @@ typedef enum ScreenType {
 void MainMenu();
 void SettingsMenu();
 void LoadConfiguration();
-
+void WriteConfiguration(char* key, int value);
+void SetVariables(char* line);
 

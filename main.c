@@ -1,10 +1,12 @@
 #include <stdlib.h>
 #include <raylib.h>
 #include "main.h"
+#include <sys/stat.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <string.h>
-ScreenType screentype = SettingsScreen;
 
+ScreenType screentype = MainScreen;
 int width = 1920;
 int height = 1080;
 int font_size = 12;
@@ -13,6 +15,7 @@ int music_level = 9;
 int sfx_level = 9;
 Vector2 mouse_position = {0.0, 0.0};
 
+Font title_font;
 
 // FPS Counters
 bool show_fps = true;
@@ -28,12 +31,11 @@ int resolution_counter = 0;
 // Vsync
 bool vsync_check = false;
 
-void LoadConfiguration() {
-  MakeDirectory("~/.config/raycar_lib");
-}
 
 void MainMenu() {
-    WriteDrawText("Astra", width / 2, height / 5, font_size * 10, BLACK);
+  WriteDrawTextFont(title_font, "Leetaro", width / 2, height / 5, font_size * 10, 0, BLACK);
+
+  /* DrawTextEx(font, text, position, fontSize, spacing, color); */
 
     WriteDrawText("Play", width / 2, height / 2, font_size * 5, BLACK);
 
@@ -147,10 +149,11 @@ void SettingsMenu() {
   if (IsMouseInside(fps_left_arrow)) {
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
       if (fps_counter == 0) {
-	fps_counter = 5;
+        fps_counter = 5;
       } else {
-	fps_counter--;
+        fps_counter--;
       }
+      SetTargetFPS(fps[fps_counter]);
     }
   }
 
@@ -158,6 +161,7 @@ void SettingsMenu() {
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
       fps_counter = (fps_counter + 1) % 6;
     }
+    SetTargetFPS(fps[fps_counter]);
   }
 
   ///////////////
@@ -178,7 +182,7 @@ void SettingsMenu() {
 
   Rectangle master_rec = MakeRect(width/2+(width/5), height/2 + (height/10), MeasureText("[]", font_size * 3) * master_level, font_size*2);
   Rectangle master_bg = MakeRect(width/2+(width/5), height/2 + (height/10), MeasureText("[]", font_size * 3) * 9, font_size*2);
-  DrawRectangleRec(master_bg, WHITE);
+  DrawRectangleRec(master_bg, RAYWHITE);
   DrawRectangleRec(master_rec, BLACK);
 
   if (IsMouseInside(master_bg)) {
@@ -205,7 +209,7 @@ void SettingsMenu() {
   Rectangle music_rec = MakeRect(width/2+(width/5), height/2 + (height/10)*2, MeasureText("[]", font_size * 3) * music_level, font_size*2);
   Rectangle music_bg = MakeRect(width/2+(width/5), height/2 + (height/10)*2, MeasureText("[]", font_size * 3) * 9, font_size*2);
 
-  DrawRectangleRec(music_bg, WHITE);
+  DrawRectangleRec(music_bg, RAYWHITE);
   DrawRectangleRec(music_rec, BLACK);
 
   
@@ -232,7 +236,7 @@ void SettingsMenu() {
   Rectangle sfx_rec = MakeRect(width/2+(width/5), height/2 + (height/10)*3, MeasureText("[]", font_size * 3) * sfx_level, font_size*2);
   Rectangle sfx_bg = MakeRect(width/2+(width/5), height/2 + (height/10)*3, MeasureText("[]", font_size * 3) * 9, font_size*2);
 		   
-  DrawRectangleRec(sfx_bg, WHITE);
+  DrawRectangleRec(sfx_bg, RAYWHITE);
   DrawRectangleRec(sfx_rec, BLACK);
 
     if (IsMouseInside(sfx_bg)) {
@@ -252,11 +256,34 @@ void SettingsMenu() {
   //////////////
 }
 
+void LoadConfiguration() {
+  // Make a config directory
+  chdir(getenv("HOME"));
+  int check = mkdir(".config/raycar", 0777);
+
+  chdir(".config/raycar");
+  FILE *fptr = fopen("config.json","rw");
+  /* Make a file */
+  /* fopen(fptr); */
+
+  /*
+    Check For 1. Resolution
+              2. VSYNC
+	      3. FPS
+              4. Master Level
+              5. Music Level
+              6. SFX Level
+  */
+  fclose(fptr);
+}
+
+
 int main() {
   SetConfigFlags(FLAG_VSYNC_HINT);
   InitWindow(width, height, "Astra");
+  title_font = LoadFontEx("/home/san/code/raylib_car/assets/Pixelout.ttf", 32, NULL,0);
   SetTargetFPS(max_fps);
-  LoadConfiguration();
+  /* LoadConfiguration(); */
   while (!WindowShouldClose()) {
     mouse_position = GetMousePosition();
     if (show_fps) {

@@ -1,6 +1,10 @@
 #include <string.h>
 
-#define WriteDrawText(text, posX, posY, fontSize, color) DrawText(text, posX - (MeasureText(text, fontSize)/2), posY, fontSize, color);
+#define WriteDrawText(text, posX, posY, fontSize, color)                       \
+  DrawText(text, posX - (MeasureText(text, fontSize) / 2), posY, fontSize,     \
+           color);
+
+#define WriteDrawTextFont(font, text, posX, posY, fontSize, spacing, color) Vector2 foo = {(posX - MeasureTextEx(font, text, fontSize, spacing).x/2), posY}; DrawTextEx(font, text, foo, fontSize, spacing, color);
 
 #define DrawRect(posX,posY,width,height,color) DrawRectangle(posX - width/2, posY, width, height, color);
 
@@ -20,3 +24,5 @@ typedef enum ScreenType {
 void MainMenu();
 void SettingsMenu();
 void LoadConfiguration();
+
+

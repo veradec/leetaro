@@ -18,11 +18,9 @@
 
 
 #define IsMouseInside(rec) CheckCollisionPointRec(mouse_position, rec)
-/* #define HIGHLIGHT_COLOR */
-/* #define CLICK_COLOR */
 
 typedef enum ScreenType {
-  MainScreen, SettingsScreen 
+  TitleScreen, SettingsScreen, GameStartScreen
 } ScreenType;
 
 void MainMenu();

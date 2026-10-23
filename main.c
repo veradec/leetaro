@@ -1,12 +1,14 @@
 #include <stdlib.h>
 #include <raylib.h>
-#include "main.h"
 #include <sys/stat.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
 
-ScreenType screentype = MainScreen;
+#include "helpers.h"
+#include "ante.h"
+
+ScreenType screentype = GameStartScreen;
 int width = 1920;
 int height = 1080;
 int font_size = 12;
@@ -32,23 +34,39 @@ int resolution_counter = 0;
 // Vsync
 bool vsync_check = false;
 
+#define BTN_PADDING 25
 
 void MainMenu() {
   WriteDrawTextFont(title_font, "Leetaro", width / 2, height / 5, font_size * 10, 0, BLACK);
 
-  /* DrawTextEx(font, text, position, fontSize, spacing, color); */
+  // Play Button
+  
 
-  WriteText("Play", width / 2, height / 2, font_size * 5, BLACK);
+  Rectangle play_btn = MakeBtn(width/2, height/2, "Play", font_size *5, BTN_PADDING);
 
-    Rectangle rec = MakeBtn(width/2, height/2 + (height/10), "Settings", font_size * 5, 25);
+  if (IsMouseInside(play_btn)) {
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+      WriteText("Play", width / 2, height / 2, font_size * 5, RED);
+      screentype = GameStartScreen;
+    } else {
+      WriteText("Play", width/2, height/2, font_size*5.2, BLACK);
+      ClearBackground(RAYWHITE);
+    }
+  } else {
+    WriteText("Play", width / 2, height / 2, font_size * 5, BLACK);
+  }
+  
+  // Settings Button
+    Rectangle rec = MakeBtn(width/2, height/2 + (height/10), "Settings", font_size * 5, BTN_PADDING);
     if (IsMouseInside(rec)) {
-      if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
-	WriteText( "Settings", width / 2, height / 2 + (height / 10),
-			  (font_size * 5 + 3),  RED);
+      if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        WriteText("Settings", width / 2, height / 2 + (height / 10),
+                  (font_size * 5 + 3), RED);
+
 	screentype = SettingsScreen;
       } else {
 	WriteText( "Settings", width / 2, height / 2 + (height / 10),
-			  font_size * 5, BLACK);
+			  font_size * 5.1, BLACK);
 	ClearBackground(RAYWHITE);
       }
     } else {
@@ -68,7 +86,7 @@ void MainMenu() {
 	CloseWindow();
 	exit(0);
       } else {
-	WriteText("Exit", width / 2, height / 2 + (height / 5), font_size * 5,
+	WriteText("Exit", width / 2, height / 2 + (height / 5), font_size * 5.2,
 		      BLACK);
       }
     } else {
@@ -268,7 +286,7 @@ void SettingsMenu() {
     if (IsMouseInside(back_rec)) {
       if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         WriteConfiguration();
-	screentype = MainScreen;
+	screentype = TitleScreen;
       }
     }
 
@@ -384,6 +402,24 @@ void WriteConfiguration() {
   printf("INFO: Wrote Configuration\n");
 }
 
+void GameStart() {
+  ClearBackground(RAYWHITE);
+  Rectangle left_rect = MakeRect(width / 2 - width / (3), height / 10,
+                                 width / 3.5, height - height / 5);
+
+  Rectangle middle_rect =
+    MakeRect(width / 2, height / 10, width / 3.5,
+	     height - height / 5);
+  
+  Rectangle right_rect =
+    MakeRect(width / 2 + width / (3), height / 10, width / 3.5,
+	     height - height / 5);
+  
+  DrawRectangleRec(left_rect, BLACK);
+  DrawRectangleRec(middle_rect, BLACK);
+  DrawRectangleRec(right_rect, BLACK);
+}
+
 int main() {
 
   LoadConfiguration();
@@ -400,13 +436,16 @@ int main() {
     BeginDrawing();
     ClearBackground(RAYWHITE);
     switch (screentype) {
-    case MainScreen:
+    case TitleScreen:
       MainMenu();
       break;
     case SettingsScreen:
       ClearBackground(RAYWHITE);
       SettingsMenu();
       break;
+    case GameStartScreen:
+      ClearBackground(BLACK);
+      GameStart();
     }
     EndDrawing();
   }

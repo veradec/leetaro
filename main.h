@@ -1,10 +1,14 @@
 #include <string.h>
 
+#define TEXT_FONT text_font
+
 #define WriteDrawText(text, posX, posY, fontSize, color)                       \
   DrawText(text, posX - (MeasureText(text, fontSize) / 2), posY, fontSize,     \
            color);
 
-#define WriteDrawTextFont(font, text, posX, posY, fontSize, spacing, color) Vector2 foo = {(posX - MeasureTextEx(font, text, fontSize, spacing).x/2), posY}; DrawTextEx(font, text, foo, fontSize, spacing, color);
+#define WriteDrawTextFont(font, text, posX, posY, fontSize, spacing, color) DrawTextEx(font, text, (Vector2){(posX - MeasureTextEx(font, text, fontSize, spacing).x/2), posY}, fontSize, spacing, color);
+
+#define WriteText(text, posX, posY, fontSize, color) DrawTextEx(TEXT_FONT, text, (Vector2){(posX - MeasureTextEx(TEXT_FONT, text, fontSize, 0).x/2), posY}, fontSize, 0, color);
 
 #define DrawRect(posX,posY,width,height,color) DrawRectangle(posX - width/2, posY, width, height, color);
 

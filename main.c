@@ -14,9 +14,10 @@ int master_level = 9;
 int music_level = 9;
 int sfx_level = 9;
 Vector2 mouse_position = {0.0, 0.0};
-
+Vector2 foo;
+	    
 Font title_font;
-
+Font text_font;
 // FPS Counters
 bool show_fps = true;
 int max_fps = 60;
@@ -37,22 +38,22 @@ void MainMenu() {
 
   /* DrawTextEx(font, text, position, fontSize, spacing, color); */
 
-    WriteDrawText("Play", width / 2, height / 2, font_size * 5, BLACK);
+  WriteText("Play", width / 2, height / 2, font_size * 5, BLACK);
 
     Rectangle rec = MakeBtn(width/2, height/2 + (height/10), "Settings", font_size * 5, 25);
     if (IsMouseInside(rec)) {
       if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
-	WriteDrawText("Settings", width / 2, height / 2 + (height / 10),
-		      (font_size * 5 + 3), RED);
+	WriteText( "Settings", width / 2, height / 2 + (height / 10),
+			  (font_size * 5 + 3),  RED);
 	screentype = SettingsScreen;
       } else {
-	WriteDrawText("Settings", width / 2, height / 2 + (height / 10),
-		      font_size * 5, BLACK);
+	WriteText( "Settings", width / 2, height / 2 + (height / 10),
+			  font_size * 5, BLACK);
 	ClearBackground(RAYWHITE);
       }
     } else {
-      WriteDrawText("Settings", width / 2, height / 2 + (height / 10),
-		      font_size * 5, BLACK);
+      WriteText( "Settings", width / 2, height / 2 + (height / 10),
+			font_size * 5,  BLACK);
     }
 
     /* rec = {width / 2 - MeasureText("Exit", font_size * 5), height /2  + (height / 5), MeasureText("Exit", font_size * 5), 80}; */
@@ -61,17 +62,17 @@ void MainMenu() {
 
     if (CheckCollisionPointRec(mouse_position, exit_btn)) {
       if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-	WriteDrawText("Exit", width / 2, height / 2 + (height / 5),
+	WriteText("Exit", width / 2, height / 2 + (height / 5),
 		      (font_size * 5 + 3), RED);
 	EndDrawing();
 	CloseWindow();
 	exit(0);
       } else {
-	WriteDrawText("Exit", width / 2, height / 2 + (height / 5), font_size * 5,
+	WriteText("Exit", width / 2, height / 2 + (height / 5), font_size * 5,
 		      BLACK);
       }
     } else {
-    WriteDrawText("Exit", width / 2, height / 2 + (height / 5), font_size * 5,
+    WriteText("Exit", width / 2, height / 2 + (height / 5), font_size * 5,
 		  BLACK);
 
     }
@@ -79,18 +80,18 @@ void MainMenu() {
 }
 
 void SettingsMenu() {
-  WriteDrawText("Settings", width / 2, height / 2 - (height / 3),
+  WriteText("Settings", width / 2, height / 2 - (height / 3),
 		(font_size * 3), BLACK);
 
 
-  WriteDrawText("Resolution", width / 2 - (width / 6),
+  WriteText("Resolution", width / 2 - (width / 6),
 		height / 2 - (height / 4), (font_size * 2), BLACK);
 
   Rectangle resolution_left_arrow = MakeBtn(((width / 2 + width / 5) - MeasureText("1920x108", font_size*2)), height / 2 - height / 4,
 				 ">", font_size * 2, 10);
   Rectangle resolution_right_arrow = MakeBtn(((width / 2 + width / 5) + MeasureText("1920x108", font_size*2)), height / 2 - height / 4,
 				 ">", font_size * 2, 10);
-  WriteDrawText(TextFormat("<   %ix%i   >", widths[resolution_counter], heights[resolution_counter]),
+  WriteText(TextFormat("<   %ix%i   >", widths[resolution_counter], heights[resolution_counter]),
 		width / 2 + (width / 5), height / 2 - (height / 4),
 		(font_size * 2), BLACK);
 
@@ -114,7 +115,7 @@ void SettingsMenu() {
 
 
   // VSync
-  WriteDrawText("Vsync", width / 2 - (width / 6), height / 3.1, (font_size * 2),
+  WriteText("Vsync", width / 2 - (width / 6), height / 3.1, (font_size * 2),
 		BLACK);
   Rectangle vsync_left_arrow = MakeBtn(((width / 2 + width / 5) - MeasureText("True", font_size*2)), height / 3.1 ,
 				 ">", font_size * 2, 10);
@@ -122,9 +123,9 @@ void SettingsMenu() {
 				 ">", font_size * 2, 10);
   if (vsync_check) {
 
-    WriteDrawText("<   True   >", width / 2 + (width / 5), height / 3.1, (font_size * 2), BLACK);
+    WriteText("<   True   >", width / 2 + (width / 5), height / 3.1, (font_size * 2), BLACK);
   } else {
-    WriteDrawText("<   False   >", width / 2 + (width / 5), height / 3.1, (font_size * 2), BLACK);
+    WriteText("<   False   >", width / 2 + (width / 5), height / 3.1, (font_size * 2), BLACK);
   }
   if (IsMouseInside(vsync_left_arrow) || IsMouseInside(vsync_right_arrow)) {
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
@@ -136,18 +137,22 @@ void SettingsMenu() {
 
 
   // FPS
-  WriteDrawText("FPS", width / 2 - (width / 6), height / 2.5, (font_size * 2),
+  Color fps_color = BLACK;
+  if (vsync_check) {
+    fps_color = (Color){100,100,100,100};
+  }
+  WriteText("FPS", width / 2 - (width / 6), height / 2.5, (font_size * 2),
 		BLACK);
   Rectangle fps_left_arrow = MakeBtn(((width / 2 + width / 5) - MeasureText("144 ", font_size*2)), height / 2.5 ,
 				 ">", font_size * 2, 10);
   Rectangle fps_right_arrow = MakeBtn(((width / 2 + width / 5) + MeasureText("144 ", font_size*2)), height / 2.5,
 				 ">", font_size * 2, 10);
 
-  WriteDrawText(TextFormat("<   %i   >", fps[fps_counter]),
-		width / 2 + (width / 5), height / 2.5, (font_size * 2), BLACK);
+  WriteText(TextFormat("<   %i   >", fps[fps_counter]),
+		width / 2 + (width / 5), height / 2.5, (font_size * 2), fps_color);
 
   if (IsMouseInside(fps_left_arrow)) {
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && !(vsync_check)) {
       if (fps_counter == 0) {
         fps_counter = 5;
       } else {
@@ -158,7 +163,7 @@ void SettingsMenu() {
   }
 
   if (IsMouseInside(fps_right_arrow)) {
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && !(vsync_check)) {
       fps_counter = (fps_counter + 1) % 6;
     }
     SetTargetFPS(fps[fps_counter]);
@@ -170,10 +175,10 @@ void SettingsMenu() {
 
 
 
-  WriteDrawText("Audio Level", width /2, height/2, (font_size * 3), BLACK);
+  WriteText("Audio Level", width /2, height/2, (font_size * 3), BLACK);
 
   // Master Level
-  WriteDrawText("Master Level", width / 2 - (width / 6),
+  WriteText("Master Level", width / 2 - (width / 6),
 		height / 2 + (height / 10), (font_size * 2), BLACK);
 
   Rectangle master_rec = MakeRect(width/2+(width/5), height/2 + (height/10), MeasureText("[]", font_size * 3) * master_level, font_size*2);
@@ -198,7 +203,7 @@ void SettingsMenu() {
   //////////////
 
   // Music Level
-  WriteDrawText("Music Level", width / 2 - (width / 6),
+  WriteText("Music Level", width / 2 - (width / 6),
 		height / 2 + (height / 10) * 2, (font_size * 2), BLACK);
 
 
@@ -226,7 +231,7 @@ void SettingsMenu() {
  //////////////
 
   // SFX Level
-  WriteDrawText("SFX Level", width / 2 - (width / 6),
+  WriteText("SFX Level", width / 2 - (width / 6),
 		height / 2 + (height / 10) * 3, (font_size * 2), BLACK);
 
   Rectangle sfx_rec = MakeRect(width/2+(width/5), height/2 + (height/10)*3, MeasureText("[]", font_size * 3) * sfx_level, font_size*2);
@@ -257,7 +262,7 @@ void SettingsMenu() {
 
 		   
   DrawRectangleRec(back_rec, RAYWHITE);
-    WriteDrawText("Back", width / 2,
+    WriteText("Back", width / 2,
 		height / 2 + (height / 10) * 4, (font_size * 2), BLACK);
 
     if (IsMouseInside(back_rec)) {
@@ -342,10 +347,6 @@ void LoadConfiguration() {
   printf("INFO: reading config\n");
   char buf[1024] = "";
   
-  while (fgets(buf, 1024, fptr)) {
-    SetVariables(buf);
-  }
-
   /*
     Check For 1. Resolution
               2. VSYNC
@@ -354,6 +355,10 @@ void LoadConfiguration() {
               5. Music Level
               6. SFX Level
   */
+  while (fgets(buf, 1024, fptr)) {
+    SetVariables(buf);
+  }
+
   fclose(fptr);
 }
 
@@ -381,11 +386,12 @@ void WriteConfiguration() {
 
 int main() {
 
-  SetConfigFlags(FLAG_VSYNC_HINT);
+  LoadConfiguration();
+  if(vsync_check){   SetConfigFlags(FLAG_VSYNC_HINT); }
   InitWindow(width, height, "Leetaro");
   title_font = LoadFontEx("/home/san/code/raylib_car/assets/Pixelout.ttf", 32, NULL,0);
+  text_font = LoadFontEx("/home/san/code/raylib_car/assets/alagard.ttf", 48, NULL,0);
   SetTargetFPS(max_fps);
-  LoadConfiguration();
   while (!WindowShouldClose()) {
     mouse_position = GetMousePosition();
     if (show_fps) {

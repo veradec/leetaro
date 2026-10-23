@@ -193,7 +193,6 @@ void SettingsMenu() {
 	master_level++;
       }
     }
-    WriteConfiguration("master_level", master_level);
   }
   
   //////////////
@@ -222,7 +221,6 @@ void SettingsMenu() {
 	music_level++;
       }
     }
-    WriteConfiguration("music_level", music_level);
   }
 
  //////////////
@@ -264,6 +262,7 @@ void SettingsMenu() {
 
     if (IsMouseInside(back_rec)) {
       if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        WriteConfiguration();
 	screentype = MainScreen;
       }
     }
@@ -280,6 +279,12 @@ void SetVariables(char *line) {
     if (strcmp(token, "resolution") == 0) {
       printf("INFO: RESOLUTION - %s", next_token);
       width = atoi(strtok(next_token, "x"));
+      for (int i = 0; i < 3; i++) {
+        if (widths[i] == width) {
+          resolution_counter = i;
+          break;
+        }
+      }
       height = atoi(strtok(NULL, "x"));
     }
     if (strcmp(token, "vsync") == 0) {
@@ -294,6 +299,12 @@ void SetVariables(char *line) {
     if (strcmp(token, "fps") == 0) {
       printf("INFO: FPS - %s", next_token);
       max_fps = atoi(next_token);
+      for (int i = 0; i < 6; i++) {
+        if (fps[i] == max_fps) {
+          fps_counter = i;
+          break;
+        }
+      }
     }
     if (strcmp(token, "master_level") == 0) {
       printf("INFO: MASTER LEVEL - %s", next_token);
@@ -323,11 +334,8 @@ void LoadConfiguration() {
   FILE *fptr = fopen("settings.conf", "rw");
   if (!fptr) {
     fptr = fopen("settings.conf", "w");
-    printf("INFO: Couldn't read the file, so made one\n");
-    printf("INFO: Writing Configuration");
-    // Write configuration to it
-    fprintf(fptr, "resolution  = 1920x1080\nvsync = false\nfps = "
-                  "60\nmaster_level = 9\nmusic_level = 9\nsfx_level = 9\n");
+    printf("INFO: Couldn't read the file\n");
+    WriteConfiguration();
     return;
   }
 
@@ -349,60 +357,30 @@ void LoadConfiguration() {
   fclose(fptr);
 }
 
-void WriteConfiguration(char *key, int value) {
+void WriteConfiguration() {
 
   chdir(getenv("HOME"));
   int check = mkdir(".config/raycar", 0777);
 
   chdir(".config/raycar");
 
-  FILE *fptr = fopen("settings.conf", "rw");
-
-  if (!fptr) {
-    LoadConfiguration();
+  FILE *fptr = fopen("settings.conf", "w");
+  char buf[1024] = "";
+  char *vsync_string = "false";
+  if (vsync_check) {
+    vsync_string = "true";
   }
-
-  
-  if (strcmp(key, "resolution") == 0) {
-
-    return;
-  }
-
-  if (strcmp(key, "vsync") == 0) {
-    if (value == 1) {
-      // Write True to File
-    }
-
-    if (value == 0){
-      // Write False to File
-    }
-    return;
-  }
-
-  if (strcmp(key, "master_level") == 0) {
-    if (value < 10 && value > -1) {
-      // Write value to file
-    }
-    return;
-  }
-
-  if (strcmp(key, "music_level") == 0) {
-    if (value < 10 && value > -1) {
-      // Write value to file
-    }
-    return;
-  }
-
-  if (strcmp(key, "sfx_level") == 0) {
-    if (value < 10 && value > -1) {
-      // Write value to file
-    }
-    return;
-  }
+  sprintf(buf,
+          "resolution = %dx%d\nvsync = %s\nfps = %d\nmaster_level = "
+          "%d\nmusic_level = %d\nsfx_level = %d\n",
+          widths[resolution_counter], heights[resolution_counter], vsync_string,
+          fps[fps_counter], master_level, music_level, sfx_level);
+  fprintf(fptr, buf);
+  printf("INFO: Wrote Configuration\n");
 }
 
 int main() {
-  /* WriteConfiguration("resolution", 1); */
+
   SetConfigFlags(FLAG_VSYNC_HINT);
   InitWindow(width, height, "Leetaro");
   title_font = LoadFontEx("/home/san/code/raylib_car/assets/Pixelout.ttf", 32, NULL,0);

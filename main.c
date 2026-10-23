@@ -176,10 +176,6 @@ void SettingsMenu() {
   WriteDrawText("Master Level", width / 2 - (width / 6),
 		height / 2 + (height / 10), (font_size * 2), BLACK);
 
-  /* Rectangle master_rec = {width / 2 + (width / 5), height / 2 + (height / 10), */
-  /*                         MeasureText("[]", font_size * 3) * master_level, */
-  /*                         font_size * 2, BLACK}; */
-
   Rectangle master_rec = MakeRect(width/2+(width/5), height/2 + (height/10), MeasureText("[]", font_size * 3) * master_level, font_size*2);
   Rectangle master_bg = MakeRect(width/2+(width/5), height/2 + (height/10), MeasureText("[]", font_size * 3) * 9, font_size*2);
   DrawRectangleRec(master_bg, RAYWHITE);
@@ -354,10 +350,59 @@ void LoadConfiguration() {
 }
 
 void WriteConfiguration(char *key, int value) {
+
+  chdir(getenv("HOME"));
+  int check = mkdir(".config/raycar", 0777);
+
+  chdir(".config/raycar");
+
+  FILE *fptr = fopen("settings.conf", "rw");
+
+  if (!fptr) {
+    LoadConfiguration();
+  }
+
   
+  if (strcmp(key, "resolution") == 0) {
+
+    return;
+  }
+
+  if (strcmp(key, "vsync") == 0) {
+    if (value == 1) {
+      // Write True to File
+    }
+
+    if (value == 0){
+      // Write False to File
+    }
+    return;
+  }
+
+  if (strcmp(key, "master_level") == 0) {
+    if (value < 10 && value > -1) {
+      // Write value to file
+    }
+    return;
+  }
+
+  if (strcmp(key, "music_level") == 0) {
+    if (value < 10 && value > -1) {
+      // Write value to file
+    }
+    return;
+  }
+
+  if (strcmp(key, "sfx_level") == 0) {
+    if (value < 10 && value > -1) {
+      // Write value to file
+    }
+    return;
+  }
 }
 
 int main() {
+  /* WriteConfiguration("resolution", 1); */
   SetConfigFlags(FLAG_VSYNC_HINT);
   InitWindow(width, height, "Leetaro");
   title_font = LoadFontEx("/home/san/code/raylib_car/assets/Pixelout.ttf", 32, NULL,0);

@@ -1,4 +1,5 @@
 [] Cmatrix for the Title Menu Background
+[] Write Methods Fill Text (Text Splicing based on the Rectangle's width and height) in WriteTextInsideRectangle()
 [] find a wood-click sfx for clicks
  [] make the binary texture for the music bars
 [] Make the Menu Screen Work

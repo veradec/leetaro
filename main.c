@@ -8,13 +8,15 @@
 #include "helpers.h"
 #include "ante.h"
 
-ScreenType screentype = GameStartScreen;
+ScreenType screentype = SettingsScreen;
+
 int width = 1920;
 int height = 1080;
 int font_size = 12;
 int master_level = 9;
 int music_level = 9;
 int sfx_level = 9;
+
 Vector2 mouse_position = {0.0, 0.0};
 Vector2 foo;
 	    
@@ -41,6 +43,8 @@ int ante_count = 0;
 
 char file_path[1024];
 #define BTN_PADDING 25
+
+Texture2D slider_texture;
 
 void MainMenu() {
   WriteDrawTextFont(title_font, "Leetaro", width / 2, height / 5, font_size * 10, 0, BLACK);
@@ -135,9 +139,7 @@ void SettingsMenu() {
   }
 
   ///////////////
-
-
-
+  /// 
   // VSync
   WriteText("Vsync", width / 2 - (width / 6), height / 3.1, (font_size * 2),
 		BLACK);
@@ -195,10 +197,6 @@ void SettingsMenu() {
 
   ///////////////
 
-
-
-
-
   WriteText("Audio Level", width /2, height/2, (font_size * 3), BLACK);
 
   // Master Level
@@ -208,7 +206,7 @@ void SettingsMenu() {
   Rectangle master_rec = MakeRect(width/2+(width/5), height/2 + (height/10), MeasureText("[]", font_size * 3) * master_level, font_size*2);
   Rectangle master_bg = MakeRect(width/2+(width/5), height/2 + (height/10), MeasureText("[]", font_size * 3) * 9, font_size*2);
   DrawRectangleRec(master_bg, RAYWHITE);
-  DrawRectangleRec(master_rec, BLACK);
+  DrawSlider(master_rec, GREEN);
 
   if (IsMouseInside(master_bg)) {
     float delta_mouse_scroll = GetMouseWheelMove();
@@ -235,7 +233,7 @@ void SettingsMenu() {
   Rectangle music_bg = MakeRect(width/2+(width/5), height/2 + (height/10)*2, MeasureText("[]", font_size * 3) * 9, font_size*2);
 
   DrawRectangleRec(music_bg, RAYWHITE);
-  DrawRectangleRec(music_rec, BLACK);
+  DrawSlider(music_rec, GREEN);
 
   
   if (IsMouseInside(music_bg)) {
@@ -262,7 +260,7 @@ void SettingsMenu() {
   Rectangle sfx_bg = MakeRect(width/2+(width/5), height/2 + (height/10)*3, MeasureText("[]", font_size * 3) * 9, font_size*2);
 		   
   DrawRectangleRec(sfx_bg, RAYWHITE);
-  DrawRectangleRec(sfx_rec, BLACK);
+  DrawSlider(sfx_rec, GREEN);
 
     if (IsMouseInside(sfx_bg)) {
     float delta_mouse_scroll = GetMouseWheelMove();
@@ -416,7 +414,7 @@ void GameStart() {
   DrawRectangleRec(middle_rect, (Color){50,50,50, 255});
   DrawRectangleRec(right_rect, (Color){50,50,50, 255});
 
-  /* WriteTextInsideRectangle(left_rect, MIDDLE_TOP, "<~    KiloByte    ~>", font_size*2, 20, WHITE); */
+  WriteTextInsideRectangle(left_rect, MIDDLE_TOP, "<~    KiloByte    ~>", font_size*2, 20, WHITE);
   /* WriteTextInsideRectangle(middle_rect, FILL, "<~    KiloByte    ~>", font_size*2, 20, WHITE); */
   /* if (ante_count < 12) { */
   /*   ante_count +=3; */
@@ -478,7 +476,11 @@ int main() {
   InitWindow(width, height, "Leetaro");
 
   title_font = LoadFontEx("./assets/Pixelout.ttf", 32, NULL,0);
-  text_font = LoadFontEx("./assets/alagard.ttf", 48, NULL,0);
+  text_font = LoadFontEx("./assets/alagard.ttf", 48, NULL, 0);
+  Image slider_image = LoadImage("./assets/png/Loading_Screen.png");
+  ImageResize(&slider_image, 100,100);
+  slider_texture = LoadTextureFromImage(slider_image);
+  SetTextureFilter(slider_texture, TEXTURE_FILTER_BILINEAR);
   SetTargetFPS(max_fps);
   while (!WindowShouldClose()) {
     mouse_position = GetMousePosition();

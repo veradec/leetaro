@@ -33,6 +33,9 @@ DrawTextEx(font, text, (Vector2){(posX - MeasureTextEx(font, text, fontSize, spa
   DrawRectangleRec(rec, color);
 
 #define IsMouseInside(rec) CheckCollisionPointRec(mouse_position, rec)
+
+
+#define DrawSlider(rec, color) DrawTextureRec(slider_texture, rec, (Vector2){rec.x,rec.y}, color);
 ////////////////////
 
 

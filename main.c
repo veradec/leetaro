@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
-
+#include <math.h>
 #include "helpers.h"
 #include "ante.h"
 
@@ -31,9 +31,15 @@ int widths[] = {1920, 1366, 2560 };
 int heights[] = {1080, 768, 1440 };
 int resolution_counter = 0;
 
+
 // Vsync
 bool vsync_check = false;
 
+// ante_count
+int ante_count = 0;
+
+
+char file_path[1024];
 #define BTN_PADDING 25
 
 void MainMenu() {
@@ -348,17 +354,13 @@ void SetVariables(char *line) {
 
 void LoadConfiguration() {
   // Make a config directory
-  chdir(getenv("HOME"));
-  int check = mkdir(".config/raycar", 0777);
-
-  chdir(".config/raycar");
 
   /* Make a file */
-  FILE *fptr = fopen("settings.conf", "rw");
+  FILE *fptr = fopen(file_path, "rw");
   if (!fptr) {
     fptr = fopen("settings.conf", "w");
-    printf("INFO: Couldn't read the file\n");
     WriteConfiguration();
+    printf("INFO: Couldn't read the file, So Write Configuration\n");
     return;
   }
 
@@ -382,12 +384,7 @@ void LoadConfiguration() {
 
 void WriteConfiguration() {
 
-  chdir(getenv("HOME"));
-  int check = mkdir(".config/raycar", 0777);
-
-  chdir(".config/raycar");
-
-  FILE *fptr = fopen("settings.conf", "w");
+  FILE *fptr = fopen(file_path, "w");
   char buf[1024] = "";
   char *vsync_string = "false";
   if (vsync_check) {
@@ -414,19 +411,74 @@ void GameStart() {
   Rectangle right_rect =
     MakeRect(width / 2 + width / (3), height / 10, width / 3.5,
 	     height - height / 5);
-  
-  DrawRectangleRec(left_rect, BLACK);
-  DrawRectangleRec(middle_rect, BLACK);
-  DrawRectangleRec(right_rect, BLACK);
+
+  DrawRectangleRec(left_rect, (Color){50,50,50, 255});
+  DrawRectangleRec(middle_rect, (Color){50,50,50, 255});
+  DrawRectangleRec(right_rect, (Color){50,50,50, 255});
+
+  /* WriteTextInsideRectangle(left_rect, MIDDLE_TOP, "<~    KiloByte    ~>", font_size*2, 20, WHITE); */
+  /* WriteTextInsideRectangle(middle_rect, FILL, "<~    KiloByte    ~>", font_size*2, 20, WHITE); */
+  /* if (ante_count < 12) { */
+  /*   ante_count +=3; */
+  /* } */
+}
+
+void WriteTextInsideRectangle(Rectangle rec, Position pos, char *text,
+                              int font_size, int padding, Color color) {
+  int x = rec.x;
+  int y = rec.y;
+  int w = rec.width;
+  int h = rec.height;
+  switch (pos) {
+  case LEFT_TOP:	    
+    WriteText(text, x + MeasureText(text, font_size),y+padding,font_size, color);
+    break;		    				   
+  case MIDDLE_TOP:						   
+    WriteText(text, x + w/2,y+padding,font_size, color);
+    break;					       
+  case RIGHT_TOP:
+    WriteText(text, x + w - MeasureText(text, font_size),y+padding,font_size, color);
+    break;
+  case LEFT_CENTER:
+    WriteText(text, x + MeasureText(text, font_size),y+h/2,font_size, color);
+    break;
+  case MIDDLE_CENTER:
+    WriteText(text, x + w/2,y+h/2,font_size, color);
+    break;
+
+  case RIGHT_CENTER:
+    WriteText(text, x + w - MeasureText(text, font_size),y+h/2,font_size, color);
+    break;
+  case LEFT_BOTTOM:
+    WriteText(text, x + MeasureText(text, font_size),y+h-padding-font_size,font_size, color);
+    break;
+  case MIDDLE_BOTTOM:
+    WriteText(text, x + w/2,y+h-padding-font_size,font_size, color);
+    break;
+  case RIGHT_BOTTOM:
+    WriteText(text, x + w - MeasureText(text, font_size), y + h - padding - font_size,
+              font_size, color);
+    break;
+  case FILL:
+    WriteText(text, x+MeasureTextEx(TEXT_FONT, text, font_size, 0).x/2,y,font_size,color);
+    break;
+  }
 }
 
 int main() {
+  char *home = (getenv("HOME"));
+
+  char dir_path[1024];
+  sprintf(dir_path, "%s/.config/leetaro/", home);
+  mkdir(dir_path, 0777);
+  sprintf(file_path, "%s/.config/leetaro/settings.conf", home);
 
   LoadConfiguration();
   if(vsync_check){   SetConfigFlags(FLAG_VSYNC_HINT); }
   InitWindow(width, height, "Leetaro");
-  title_font = LoadFontEx("/home/san/code/raylib_car/assets/Pixelout.ttf", 32, NULL,0);
-  text_font = LoadFontEx("/home/san/code/raylib_car/assets/alagard.ttf", 48, NULL,0);
+
+  title_font = LoadFontEx("./assets/Pixelout.ttf", 32, NULL,0);
+  text_font = LoadFontEx("./assets/alagard.ttf", 48, NULL,0);
   SetTargetFPS(max_fps);
   while (!WindowShouldClose()) {
     mouse_position = GetMousePosition();

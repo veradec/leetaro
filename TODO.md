@@ -1,6 +1,6 @@
 [] Cmatrix for the Title Menu Background
 [] find a wood-click sfx for clicks
-[] make the binary texture for the music bars
+ [] make the binary texture for the music bars
 [] Make the Menu Screen Work
    [] Try Anchoring the insides of Each rectangle, to the rectangle.
 -- Done

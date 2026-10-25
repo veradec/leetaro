@@ -22,6 +22,7 @@ Vector2 foo;
 	    
 Font title_font;
 Font text_font;
+
 // FPS Counters
 bool show_fps = true;
 int max_fps = 60;
@@ -33,13 +34,11 @@ int widths[] = {1920, 1366, 2560 };
 int heights[] = {1080, 768, 1440 };
 int resolution_counter = 0;
 
-
 // Vsync
 bool vsync_check = false;
 
 // ante_count
 int ante_count = 0;
-
 
 char file_path[1024];
 #define BTN_PADDING 25
@@ -50,7 +49,6 @@ void MainMenu() {
   WriteDrawTextFont(title_font, "Leetaro", width / 2, height / 5, font_size * 10, 0, BLACK);
 
   // Play Button
-  
 
   Rectangle play_btn = MakeBtn(width/2, height/2, "Play", font_size *5, BTN_PADDING);
 
@@ -84,8 +82,6 @@ void MainMenu() {
 			font_size * 5,  BLACK);
     }
 
-    /* rec = {width / 2 - MeasureText("Exit", font_size * 5), height /2  + (height / 5), MeasureText("Exit", font_size * 5), 80}; */
-
     Rectangle exit_btn = MakeBtn(width/2, height/2 + (height/5), "Exit",font_size*5, 10);
 
     if (CheckCollisionPointRec(mouse_position, exit_btn)) {
@@ -102,7 +98,6 @@ void MainMenu() {
     } else {
     WriteText("Exit", width / 2, height / 2 + (height / 5), font_size * 5,
 		  BLACK);
-
     }
 
 }
@@ -415,10 +410,6 @@ void GameStart() {
   DrawRectangleRec(right_rect, (Color){50,50,50, 255});
 
   WriteTextInsideRectangle(left_rect, MIDDLE_TOP, "<~    KiloByte    ~>", font_size*2, 20, WHITE);
-  /* WriteTextInsideRectangle(middle_rect, FILL, "<~    KiloByte    ~>", font_size*2, 20, WHITE); */
-  /* if (ante_count < 12) { */
-  /*   ante_count +=3; */
-  /* } */
 }
 
 void WriteTextInsideRectangle(Rectangle rec, Position pos, char *text,
